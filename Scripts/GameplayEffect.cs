@@ -22,6 +22,21 @@ namespace KimScor.GameplayTagSystem.Effect
         public bool DebugMode;
 
         public abstract GameplayEffectSpec CreateSpec(GameplayEffectSystem owner);
+
+        public virtual bool CanActivateGameplayEffect(GameplayTagSystem targetGameplayTagSystem)
+        {
+            // 필요한 태그가 있으나 소유하고 있지 않다.
+            if (EffectTags.ActivateEffectRequiredTags is not null
+                && !targetGameplayTagSystem.ContainAllTagsInOwned(EffectTags.ActivateEffectRequiredTags))
+                return false;
+
+            // 방해 태그가 있고 방해 태그를 소유하고 있다.
+            if (EffectTags.ActivateEffectIgnoreTags is not null
+               && targetGameplayTagSystem.ContainOnceTagsInOwned(EffectTags.ActivateEffectIgnoreTags))
+                return false;
+
+            return true;
+        }
     }
 }
 

@@ -275,14 +275,32 @@ namespace KimScor.GameplayTagSystem.Effect
 
         public virtual bool CanActivateGameplayEffect()
         {
-            return Owner.GameplayTagSystem.ContainAllOwnedTags(GameplayEffect.EffectTags.ActivateEffectRequiredTags)
-                && Owner.GameplayTagSystem.ContainNotAllOwnedTags(GameplayEffect.EffectTags.ActivateEffectIgnoreTags);
+            // 필요한 태그가 있으나 소유하고 있지 않다.
+            if (GameplayEffect.EffectTags.ActivateEffectRequiredTags is not null
+                && !Owner.GameplayTagSystem.ContainAllTagsInOwned(GameplayEffect.EffectTags.ActivateEffectRequiredTags))
+                return false;
+
+            // 방해 태그가 있고 방해 태그를 소유하고 있다.
+            if (GameplayEffect.EffectTags.ActivateEffectIgnoreTags is not null
+               && Owner.GameplayTagSystem.ContainOnceTagsInOwned(GameplayEffect.EffectTags.ActivateEffectIgnoreTags))
+                return false;
+
+            return true;
         }
 
         protected virtual bool CanApplyGameplayEffect()
         {
-            return Owner.GameplayTagSystem.ContainAllOwnedTags(GameplayEffect.EffectTags.ApplyEffectRequiredTags)
-                && Owner.GameplayTagSystem.ContainNotAllOwnedTags(GameplayEffect.EffectTags.ApplyEffectIgnoreTags);
+            // 필요한 태그가 있으나 소유하고 있지 않다.
+            if (GameplayEffect.EffectTags.ApplyEffectRequiredTags is not null
+                && !Owner.GameplayTagSystem.ContainAllTagsInOwned(GameplayEffect.EffectTags.ApplyEffectRequiredTags))
+                return false;
+
+            // 방해 태그가 있고 방해 태그를 소유하고 있다.
+            if (GameplayEffect.EffectTags.ApplyEffectIgnoreTags is not null
+               && Owner.GameplayTagSystem.ContainOnceTagsInOwned(GameplayEffect.EffectTags.ApplyEffectIgnoreTags))
+                return false;
+
+            return true;
         }
     }
 }
