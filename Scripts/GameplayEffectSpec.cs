@@ -1,11 +1,15 @@
 ﻿using UnityEngine;
 using System.Linq;
+using UnityEngine.Events;
 
 namespace KimScor.GameplayTagSystem.Effect
 {
     [System.Serializable]
     public abstract class GameplayEffectSpec
     {
+        #region Events
+        public delegate void GameplayEffectSpecState(GameplayEffectSpec gameplayEffectSpec);
+        #endregion
         private GameplayEffect _GameplayEffect;
         private GameplayEffectSystem _Owner;
         protected float _ElapsedTime;
@@ -28,10 +32,8 @@ namespace KimScor.GameplayTagSystem.Effect
         public bool IsDuration => GameplayEffect.DurationPolicy.Equals(EDurationPolicy.Duration);
         public bool IsInfinite => GameplayEffect.DurationPolicy.Equals(EDurationPolicy.Infinite);
 
-        public EUpdateType UpdateType => GameplayEffect.UpdateType;
 
-        public bool CanIgnoreUpdated => GameplayEffect.CanIgnoreUpdated;
-
+        public event GameplayEffectSpecState OnFinishedGameplayEffect;
         public GameplayEffectSpec(GameplayEffect effect, GameplayEffectSystem owner)
         {
             _GameplayEffect = effect;
@@ -79,23 +81,6 @@ namespace KimScor.GameplayTagSystem.Effect
                 Owner.GameplayTagSystem.OnRemoveOwnedTag += GameplayTagSystem_OnUpdateOwnedTag;
             }
 
-            if (IsDuration || !UpdateType.Equals(EUpdateType.None))
-            {
-                switch (UpdateType)
-                {
-                    case EUpdateType.None:
-                        break;
-                    case EUpdateType.Update:
-                        Owner.OnUpdatedEffect += Owner_OnUpdatedEffect;
-                        break;
-                    case EUpdateType.Fixed:
-                        Owner.OnFixedUpdatedEffect += Owner_OnUpdatedEffect;
-                        break;
-                    default:
-                        break;
-                }
-            }
-
             EnterEffect();
 
             if (!Activate)
@@ -112,46 +97,31 @@ namespace KimScor.GameplayTagSystem.Effect
                 EndGameplayEffect();
             }
         }
-
-        private void Owner_OnUpdatedEffect(GameplayEffectSystem effectSystem, float deltaTime)
+        public void OnUpdateEffect(float deltaTime)
         {
-            if (GameplayEffect.DebugMode)
-                Debug.Log("Update Effect : " + GameplayEffect.name);
+            if (!_Apply)
+                return;
 
-            if (_Apply)
+            if (GameplayEffect.DurationPolicy.Equals(EDurationPolicy.Duration))
             {
-                OnUpdateEffect(deltaTime);
+                _ElapsedTime += deltaTime;
 
-                if (GameplayEffect.DurationPolicy.Equals(EDurationPolicy.Duration))
+                if (_ElapsedTime >= Duration)
                 {
-                    _ElapsedTime += deltaTime;
+                    EndGameplayEffect();
 
-                    if (_ElapsedTime >= Duration)
-                    {
-                        EndGameplayEffect();
-
-                        return;
-                    }
+                    return;
                 }
             }
-            else
-            {
-                if(CanIgnoreUpdated)
-                {
-                    if (GameplayEffect.DurationPolicy.Equals(EDurationPolicy.Duration))
-                    {
-                        _ElapsedTime += deltaTime;
 
-                        if (_ElapsedTime >= Duration)
-                        {
-                            EndGameplayEffect();
-
-                            return;
-                        }
-                    }
-                }
-            }
+            UpdateEffect(deltaTime);
         }
+        public virtual void OnFixedUpdateEffect(float deltaTime) 
+        {
+            if (!_Apply)
+                return;
+        }
+
 
         private void GameplayTagSystem_OnUpdateOwnedTag(GameplayTagSystem gameplayTagSystem, GameplayTag changedTag)
         {
@@ -183,29 +153,13 @@ namespace KimScor.GameplayTagSystem.Effect
                 Owner.GameplayTagSystem.OnRemoveOwnedTag -= GameplayTagSystem_OnUpdateOwnedTag;
             }
 
-            if (IsDuration || !UpdateType.Equals(EUpdateType.None))
-            {
-                switch (UpdateType)
-                {
-                    case EUpdateType.None:
-                        Owner.OnUpdatedEffect -= Owner_OnUpdatedEffect;
-                        break;
-                    case EUpdateType.Update:
-                        Owner.OnUpdatedEffect -= Owner_OnUpdatedEffect;
-                        break;
-                    case EUpdateType.Fixed:
-                        Owner.OnFixedUpdatedEffect -= Owner_OnUpdatedEffect;
-                        break;
-                    default:
-                        break;
-                }
-            }
-
             Owner.GameplayTagSystem.RemoveOwnedTags(GameplayEffect.EffectTags.ActivateGrantedTags);
 
             ExitEffect();
 
             Owner.RemoveGameplayEffectList(this);
+
+            OnFinishedGameplayEffect?.Invoke(this);
         }
         /// <summary>
         /// 이펙트 발동 시작시 효과
@@ -216,11 +170,13 @@ namespace KimScor.GameplayTagSystem.Effect
         /// 이펙트 발동 종료시 효과
         /// </summary>
         protected abstract void ExitEffect();
-        
+
         /// <summary>
         /// 지속, 영속 효과의 매 틱 효과
         /// </summary>
-        protected abstract void OnUpdateEffect(float deltaTime);
+        protected virtual void UpdateEffect(float deltaTime) { }
+
+
 
         /// <summary>
         /// 이펙트 적용 시작시 효과

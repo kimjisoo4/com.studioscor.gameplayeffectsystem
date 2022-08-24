@@ -8,7 +8,6 @@ namespace KimScor.GameplayTagSystem.Effect
     public class GameplayEffectSystem : MonoBehaviour
     {
         #region Events
-        public delegate void UpdateEffectHandler(GameplayEffectSystem effectSystem, float deltaTime);
         #endregion
         [SerializeField] private GameplayTagSystem _GameplayTagSystem;
 
@@ -29,9 +28,6 @@ namespace KimScor.GameplayTagSystem.Effect
         public GameplayTagSystem GameplayTagSystem { get => _GameplayTagSystem; }
 
         [SerializeField] private GameplayEffect[] InitializationEffects;
-
-        public event UpdateEffectHandler OnUpdatedEffect;
-        public event UpdateEffectHandler OnFixedUpdatedEffect;
 
 #if UNITY_EDITOR
         private void Reset()
@@ -65,6 +61,39 @@ namespace KimScor.GameplayTagSystem.Effect
 
             return true;
         }
+        public bool ApplyGameplayEffectToSelf(GameplayEffect gameplayEffect, out GameplayEffectSpec spec)
+        {
+            spec = gameplayEffect.CreateSpec(this);
+
+            if (!spec.TryGameplayEffect())
+            {
+                return false;
+            }
+
+            return true;
+        }
+        public void ApplyGameplayEffectsToSelf(IReadOnlyCollection<GameplayEffect> gameplayEffects)
+        {
+            if (gameplayEffects is null)
+                return;
+
+            foreach (var spec in gameplayEffects)
+            {
+                ApplyGameplayEffectToSelf(spec);
+            }
+        }
+        public void ApplyGameplayEffectsToSelf(GameplayEffect[] gameplayEffects)
+        {
+            if (gameplayEffects is null)
+                return;
+
+            foreach (var spec in gameplayEffects)
+            {
+                ApplyGameplayEffectToSelf(spec);
+            }
+        }
+
+
         public bool ApplyGameplayEffectToOther(GameplayEffect gameplayEffect, object data)
         {
             var spec = gameplayEffect.CreateSpec(this);
@@ -131,6 +160,39 @@ namespace KimScor.GameplayTagSystem.Effect
 
             RemoveGameplayEffectList(gameplayEffectSpec);
         }
+        public void RemoveGameplayEffect(GameplayEffect gameplayEffect)
+        {
+            if (gameplayEffect is null)
+                return;
+
+            if(_GameplayEffects.TryGetValue(gameplayEffect, out GameplayEffectSpec spec))
+            {
+                if(spec.Activate)
+                    spec.EndGameplayEffect();
+
+                RemoveGameplayEffectList(spec);
+            }
+        }
+        public void RemoveGameplayEffects(GameplayEffect[] gameplayEffects)
+        {
+            if (gameplayEffects is null)
+                return;
+
+            foreach (var effect in gameplayEffects)
+            {
+                RemoveGameplayEffect(effect);
+            }
+        }
+        public void RemoveGameplayEffects(IReadOnlyCollection<GameplayEffect> gameplayEffects)
+        {
+            if (gameplayEffects is null)
+                return;
+
+            foreach (var effect in gameplayEffects)
+            {
+                RemoveGameplayEffect(effect);
+            }
+        }
 
 
         public void AddGameplayEffectList(GameplayEffectSpec gameplayEffectSpec)
@@ -148,11 +210,21 @@ namespace KimScor.GameplayTagSystem.Effect
 
         private void Update()
         {
-            OnUpdatedEffect?.Invoke(this, Time.deltaTime);
+            float deltaTime = Time.deltaTime;
+            
+            for (int i = 0; i < GameplayEffects.Count; i++)
+            {
+                GameplayEffects.ElementAt(i).Value.OnUpdateEffect(deltaTime);
+            }
         }
         private void FixedUpdate()
         {
-            OnFixedUpdatedEffect?.Invoke(this, Time.fixedDeltaTime);
+            float deltaTime = Time.fixedDeltaTime;
+
+            for (int i = 0; i < GameplayEffects.Count; i++)
+            {
+                GameplayEffects.ElementAt(i).Value.OnFixedUpdateEffect(deltaTime);
+            }
         }
     }
 }

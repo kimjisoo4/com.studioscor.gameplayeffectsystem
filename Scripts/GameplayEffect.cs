@@ -1,24 +1,42 @@
 ﻿using UnityEngine;
 
+#if ODIN_INSPECTOR
+using Sirenix.OdinInspector;
+#endif
 namespace KimScor.GameplayTagSystem.Effect
 {
     public abstract class GameplayEffect : ScriptableObject
     {
+#if ODIN_INSPECTOR
+        [TabGroup("Condition")]
+        [InlineProperty]
+        [HideLabel]
+#else
         [Header("이펙트의 태그")]
+#endif
         public FGameplayEffectTags EffectTags;
 
+#if ODIN_INSPECTOR
+        [TabGroup("Setting")]
+        [EnumToggleButtons]
+#else
         [Header("지속 여부")]
+#endif
         public EDurationPolicy DurationPolicy;
 
+#if ODIN_INSPECTOR
+        [TabGroup("Setting")]
+        [Title("DurationPolicy")]
+        [ShowIf("DurationPolicy", EDurationPolicy.Duration)]
+#endif
         public float Duration = 0.0f;
 
-        [Header("업데이트 사용 여부")]
-        public EUpdateType UpdateType;
-
-        [Header(" 무시중 업데이트 여부 ")]
-        public bool CanIgnoreUpdated = false;
-
+#if ODIN_INSPECTOR
+        [TabGroup("Setting")]
+        [Title("Debug Mode")]
+#else
         [Header(" 디버그 ")]
+#endif
         public bool DebugMode;
 
         public abstract GameplayEffectSpec CreateSpec(GameplayEffectSystem owner);
