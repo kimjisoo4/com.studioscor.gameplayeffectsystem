@@ -1,0 +1,23 @@
+{
+    "name": "StudioScor.EffectSystem",
+    "rootNamespace": "StudioScor.EffectSystem",
+    "references": [
+        "GUID:0e56af4e027762c43b7508efc3b00495",
+        "GUID:2a2d341d7e231f74d8c9f2adfaaa67f6"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.studioscor.gameplaytagsystem",
+            "expression": "0.0.0",
+            "define": "SCOR_ENABLE_GAMEPLAYTAG"
+        }
+    ],
+    "noEngineReferences": false
+}

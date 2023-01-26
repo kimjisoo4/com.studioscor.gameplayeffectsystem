@@ -1,4 +1,4 @@
-﻿namespace KimScor.GameplayTagSystem.Effect
+﻿namespace StudioScor.EffectSystem
 {
     public enum EDurationPolicy
     {
