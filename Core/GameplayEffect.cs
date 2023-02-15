@@ -1,60 +1,17 @@
 ﻿using UnityEngine;
-using System.Diagnostics;
-using System;
-using UnityEditor;
-
-#if SCOR_ENABLE_GAMEPLAYTAG
-using StudioScor.GameplayTagSystem;
-#endif
+using StudioScor.Utilities;
 
 namespace StudioScor.EffectSystem
 {
-
-    public abstract partial class GameplayEffect : ScriptableObject
+    public abstract partial class GameplayEffect : BaseScriptableObject
     {
-#if UNITY_EDITOR
-        public bool AutoReName = false;
-        public string FileName;
-
-        private void OnValidate()
-        {
-            if (AutoReName && name != FileName)
-            {
-                name = FileName;
-            }
-        }
-
+        [Header(" [ Gameplay Effect ]")]
+        [SerializeField] protected EEffectType _EffectType;
+        [SerializeField][SEnumCondition(nameof(_EffectType), (int)EEffectType.Duration)] protected float _Duration = 5f;
         
-#endif
-
-        [field: Header(" [ Gameplay Effect ] ")]
-        
-
-
-        [field: Header(" [ Debug ] ")]
-        [field: SerializeField] public bool UseDebug { get; private set; } = false;
-
-        public bool TryTakeEffect(GameplayEffectSystem target, int level = 0, object data = null)
-        {
-            if (!CanTakeEffect(target, level, data))
-                return false;
-
-            OnTakeEffect(target, level, data);
-
-            return true;
-        }
-        public virtual bool CanTakeEffect(GameplayEffectSystem target, int level = 0, object data = null)
-        {
-            if (target is null)
-                return false;
-
-            if (!CheckGameplayTags(target)) 
-                return false;
-
-            return true;
-        }
-        public abstract void OnTakeEffect(GameplayEffectSystem target, int level = 0, object data = null);
-
+        public EEffectType Type => _EffectType;
+        public float Duration => _Duration;
+        public abstract IEffectSpec CreateSpec(EffectSystemComponent owner, EffectSystemComponent instigator, int level = 0, object data = null);
     }
 }
 

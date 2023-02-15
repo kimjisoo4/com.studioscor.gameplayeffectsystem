@@ -1,0 +1,20 @@
+{
+    "name": "StudioScor.EffectSystem.Editor",
+    "rootNamespace": "StudioScor.EffectSystem.Editor",
+    "references": [
+        "GUID:35513184bef033a45a743bdb8c92b73f",
+        "GUID:0e56af4e027762c43b7508efc3b00495",
+        "GUID:d231f5ffb585d104580a481a96616a8c"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
