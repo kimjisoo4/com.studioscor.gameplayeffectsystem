@@ -3,9 +3,9 @@ using System;
 using Unity.VisualScripting;
 using StudioScor.Utilities.VisualScripting;
 
-namespace StudioScor.EffectSystem.VisualScripting
+namespace StudioScor.GameplayEffectSystem.VisualScripting
 {
-    public abstract class EffectSystemEventUnit: CustomEventUnit<EffectSystemComponent, IEffectSpec>
+    public abstract class EffectSystemEventUnit: CustomEventUnit<GameplayEffectSystemComponent, IGameplayEffectSpec>
     {
         [DoNotSerialize]
         [PortLabel("EffectSpec")]
@@ -17,10 +17,10 @@ namespace StudioScor.EffectSystem.VisualScripting
         {
             base.Definition();
 
-            EffectSpec = ValueOutput<IEffectSpec>(nameof(EffectSpec));
+            EffectSpec = ValueOutput<IGameplayEffectSpec>(nameof(EffectSpec));
         }
 
-        protected override void AssignArguments(Flow flow, IEffectSpec data)
+        protected override void AssignArguments(Flow flow, IGameplayEffectSpec data)
         {
             flow.SetValue(EffectSpec, data);
         }

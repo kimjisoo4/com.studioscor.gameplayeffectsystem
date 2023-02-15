@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEditor;
 
 using Unity.VisualScripting;
-using StudioScor.EffectSystem.Editor;
+using StudioScor.GameplayEffectSystem.Editor;
 
 
 namespace StudioScor.EffectSystem.VisualScripting.Editor

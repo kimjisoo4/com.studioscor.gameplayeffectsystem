@@ -2,7 +2,7 @@
 using UnityEngine;
 using Unity.VisualScripting;
 
-namespace StudioScor.EffectSystem.VisualScripting
+namespace StudioScor.GameplayEffectSystem.VisualScripting
 {
     public static class EffectSystemWithVisualScripting
     {
@@ -16,7 +16,7 @@ namespace StudioScor.EffectSystem.VisualScripting
     {
         private void Awake()
         {
-            var effectSystem = GetComponent<EffectSystemComponent>();
+            var effectSystem = GetComponent<GameplayEffectSystemComponent>();
 
             effectSystem.OnGrantedEffect += EffectSystem_OnGrantedEffect;
             effectSystem.OnRemovedEffect += EffectSystem_OnRemovedEffect;
@@ -26,19 +26,19 @@ namespace StudioScor.EffectSystem.VisualScripting
 
         private void OnDestroy()
         {
-            if (TryGetComponent(out EffectSystemComponent effectSystem))
+            if (TryGetComponent(out GameplayEffectSystemComponent effectSystem))
             {
                 effectSystem.OnGrantedEffect -= EffectSystem_OnGrantedEffect;
                 effectSystem.OnRemovedEffect -= EffectSystem_OnRemovedEffect;
             }
         }
 
-        private void EffectSystem_OnRemovedEffect(EffectSystemComponent effectSystem, IEffectSpec effectSpec)
+        private void EffectSystem_OnRemovedEffect(GameplayEffectSystemComponent effectSystem, IGameplayEffectSpec effectSpec)
         {
             EventBus.Trigger(new EventHook(EffectSystemWithVisualScripting.EFFECTSYSTEM_ON_REMOVED_EFFECT, effectSystem), effectSpec);
         }
 
-        private void EffectSystem_OnGrantedEffect(EffectSystemComponent effectSystem, IEffectSpec effectSpec)
+        private void EffectSystem_OnGrantedEffect(GameplayEffectSystemComponent effectSystem, IGameplayEffectSpec effectSpec)
         {
             EventBus.Trigger(new EventHook(EffectSystemWithVisualScripting.EFFECTSYSTEM_ON_GRANTED_EFFECT, effectSystem), effectSpec);
         }
