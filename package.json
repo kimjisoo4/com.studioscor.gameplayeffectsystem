@@ -1,6 +1,6 @@
 {
-  "name": "com.studioscor.effectsystem",
-  "version": "0.0.1",
-  "displayName": "StudioScor - EffectSystem",
-  "description": "EffectSystem - StudioScor"
+  "name": "com.studioscor.gaemplayeffectsystem",
+  "version": "0.0.11",
+  "displayName": "StudioScor - GameplayEffectSystem",
+  "description": "GameplayEffectSystem - StudioScor"
 }

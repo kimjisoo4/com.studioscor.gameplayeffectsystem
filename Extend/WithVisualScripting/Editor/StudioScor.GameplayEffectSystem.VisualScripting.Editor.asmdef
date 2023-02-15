@@ -1,6 +1,6 @@
 {
-    "name": "StudioScor.EffectSystem.VisualScripting.Editor",
-    "rootNamespace": "StudioScor.EffectSystem.VisualScripting.Editor",
+    "name": "StudioScor.GameplayEffectSystem.VisualScripting.Editor",
+    "rootNamespace": "StudioScor.GameplayEffectSystem.VisualScripting.Editor",
     "references": [
         "GUID:35513184bef033a45a743bdb8c92b73f",
         "GUID:edad09933f5e27144960dd5f5f0964f7",

@@ -2,18 +2,18 @@
 using UnityEngine;
 using StudioScor.Utilities;
 
-namespace StudioScor.EffectSystem
+namespace StudioScor.GameplayEffectSystem
 {
-    [AddComponentMenu("StudioScor/EffectSystem/Effect System Component", order: 0)]
-    public class EffectSystemComponent : BaseMonoBehaviour
+    [AddComponentMenu("StudioScor/GameplayEffectSystem/GameplayEffect System Component", order: 0)]
+    public class GameplayEffectSystemComponent : BaseMonoBehaviour
     {
         #region Event
-        public delegate void ChangeGameplayEffectHandler(EffectSystemComponent effectSystem, IEffectSpec effectSpec);
+        public delegate void ChangeGameplayEffectHandler(GameplayEffectSystemComponent effectSystem, IGameplayEffectSpec effectSpec);
         #endregion
 
         [Header(" [ Effect System ] ")]
-        private List<IEffectSpec> _Effects;
-        public IReadOnlyList<IEffectSpec> Effects => _Effects;
+        private List<IGameplayEffectSpec> _Effects;
+        public IReadOnlyList<IGameplayEffectSpec> Effects => _Effects;
 
         public event ChangeGameplayEffectHandler OnGrantedEffect;
         public event ChangeGameplayEffectHandler OnRemovedEffect;
@@ -64,7 +64,7 @@ namespace StudioScor.EffectSystem
         {
             foreach (var effect in Effects)
             {
-                if (effect.Effect == containEffect)
+                if (effect.GameplayEffect == containEffect)
                 {
                     return true;
                 }
@@ -72,11 +72,11 @@ namespace StudioScor.EffectSystem
 
             return false;
         }
-        public bool TryGetEffectSpec(GameplayEffect containEffect, out IEffectSpec spec)
+        public bool TryGetEffectSpec(GameplayEffect containEffect, out IGameplayEffectSpec spec)
         {
             foreach (var effect in Effects)
             {
-                if (effect.Effect == containEffect)
+                if (effect.GameplayEffect == containEffect)
                 {
                     spec = effect;
 
@@ -93,14 +93,14 @@ namespace StudioScor.EffectSystem
         {
             TryTakeEffect(this, effect, level, data);
         }
-        public void TryTakeEffectToOther(EffectSystemComponent target, GameplayEffect effect, int level = 0, object data = null)
+        public void TryTakeEffectToOther(GameplayEffectSystemComponent target, GameplayEffect effect, int level = 0, object data = null)
         {
             target.TryTakeEffect(this, effect, level, data);
         }
 
-        protected void TryTakeEffect(EffectSystemComponent instigator, GameplayEffect effect, int level = 0, object data = null)
+        protected void TryTakeEffect(GameplayEffectSystemComponent instigator, GameplayEffect effect, int level = 0, object data = null)
         {
-            if (TryGetEffectSpec(effect, out IEffectSpec containSpec))
+            if (TryGetEffectSpec(effect, out IGameplayEffectSpec containSpec))
             {
                 if (containSpec.TryOverlapEffect(level))
                 {
@@ -127,7 +127,7 @@ namespace StudioScor.EffectSystem
             if (effect is null)
                 return;
 
-            if (TryGetEffectSpec(effect, out IEffectSpec spec))
+            if (TryGetEffectSpec(effect, out IGameplayEffectSpec spec))
             {
                 RemoveEffect(spec);
             }
@@ -154,7 +154,7 @@ namespace StudioScor.EffectSystem
             }
         }
 
-        public void RemoveEffect(IEffectSpec effectSpec)
+        public void RemoveEffect(IGameplayEffectSpec effectSpec)
         {
             if (effectSpec is null)
                 return;
@@ -163,7 +163,7 @@ namespace StudioScor.EffectSystem
         }
 
 
-        private void RemoveEffectSpec(IEffectSpec effectSpec)
+        private void RemoveEffectSpec(IGameplayEffectSpec effectSpec)
         {
             _Effects.Remove(effectSpec);
 
@@ -173,13 +173,13 @@ namespace StudioScor.EffectSystem
         #endregion
 
         #region Callback
-        protected virtual void Callback_OnGrantedEffect(IEffectSpec addedSpec)
+        protected virtual void Callback_OnGrantedEffect(IGameplayEffectSpec addedSpec)
         {
             Log("On Granted Effect - " + addedSpec);
 
             OnGrantedEffect?.Invoke(this, addedSpec);
         }
-        protected virtual void Callback_OnRemovedEffect(IEffectSpec removedSpec)
+        protected virtual void Callback_OnRemovedEffect(IGameplayEffectSpec removedSpec)
         {
             Log("On Removed Effect - " + removedSpec);
 

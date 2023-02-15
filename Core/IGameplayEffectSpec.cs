@@ -1,16 +1,16 @@
-﻿namespace StudioScor.EffectSystem
+﻿namespace StudioScor.GameplayEffectSystem
 {
-    public interface IEffectSpec
+    public interface IGameplayEffectSpec
     {
-        public GameplayEffect Effect { get; }
-        public EffectSystemComponent Owner { get; }
-        public EffectSystemComponent Instigator { get; }
+        public GameplayEffect GameplayEffect { get; }
+        public GameplayEffectSystemComponent Owner { get; }
+        public GameplayEffectSystemComponent Instigator { get; }
 
         public bool IsActivate { get; }
         public int Level { get; }
         public float RemainTime { get; }
 
-        public void SetupSpec(EffectSystemComponent owner, EffectSystemComponent instigator, int level = 0, object data = default);
+        public void SetupSpec(GameplayEffectSystemComponent owner, GameplayEffectSystemComponent instigator, int level = 0, object data = default);
         public bool CanTakeEffect();
         public bool TryTakeEffect();
         public void ForceTakeEffect();

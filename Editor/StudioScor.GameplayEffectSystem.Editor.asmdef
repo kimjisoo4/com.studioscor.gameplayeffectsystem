@@ -1,6 +1,6 @@
 {
-    "name": "StudioScor.EffectSystem.Editor",
-    "rootNamespace": "StudioScor.EffectSystem.Editor",
+    "name": "StudioScor.GameplayEffectSystem.Editor",
+    "rootNamespace": "StudioScor.GameplayEffectSystem.Editor",
     "references": [
         "GUID:35513184bef033a45a743bdb8c92b73f",
         "GUID:0e56af4e027762c43b7508efc3b00495",
