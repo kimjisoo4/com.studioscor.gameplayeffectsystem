@@ -3,6 +3,23 @@ using StudioScor.Utilities;
 
 namespace StudioScor.GameplayEffectSystem
 {
+    [System.Serializable]
+    public struct FGameplayEffect
+    {
+        public GameplayEffect Effect;
+        public int Level;
+        public float Strength;
+        public object Data;
+
+        public FGameplayEffect(GameplayEffect effect, int level, float strength, object data)
+        {
+            Effect = effect;
+            Level = level;
+            Data = data;
+            Strength = strength;
+        }
+    }
+
     public abstract partial class GameplayEffect : BaseScriptableObject
     {
         [Header(" [ Gameplay Effect ]")]
@@ -11,7 +28,7 @@ namespace StudioScor.GameplayEffectSystem
         
         public EGameplayEffectType Type => _EffectType;
         public float Duration => _Duration;
-        public abstract IGameplayEffectSpec CreateSpec(GameplayEffectSystemComponent owner, GameplayEffectSystemComponent instigator, int level = 0, object data = null);
+        public abstract IGameplayEffectSpec CreateSpec(IGameplayEffectSystem owner, IGameplayEffectSystem instigator, int level = 0, float strength = 0f, object data = null);
     }
 }
 

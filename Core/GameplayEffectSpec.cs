@@ -13,18 +13,21 @@ namespace StudioScor.GameplayEffectSystem
     {
         protected readonly T _GameplayEffect;
 
-        private GameplayEffectSystemComponent _Owner;
-        private GameplayEffectSystemComponent _Instigator;
-        protected int _Level;
+        private IGameplayEffectSystem _Owner;
+        private IGameplayEffectSystem _Instigator;
 
         private bool _IsActivate = false;
 
-        private float _RemainTime;
+        protected int _Level;
+        protected float _Strength;
+        protected float _RemainTime;
+
         public GameplayEffect GameplayEffect => _GameplayEffect;
-        public GameplayEffectSystemComponent Owner => _Owner;
-        public GameplayEffectSystemComponent Instigator => _Instigator;
+        public IGameplayEffectSystem Owner => _Owner;
+        public IGameplayEffectSystem Instigator => _Instigator;
         public bool IsActivate => _IsActivate;
         public int Level => _Level;
+        public float Strength => _Strength;
         public float RemainTime => _RemainTime;
 
 #if UNITY_EDITOR
@@ -46,21 +49,27 @@ namespace StudioScor.GameplayEffectSystem
             _GameplayEffect = gameplayEffect;
         }
 
-        public virtual void SetupSpec(GameplayEffectSystemComponent owner, GameplayEffectSystemComponent instigator, int level = 0, object data = default)
+        public virtual void SetupSpec(IGameplayEffectSystem owner, IGameplayEffectSystem instigator, int level = 0, float strength = 0f, object data = default)
         {
             _Owner = owner;
             _Instigator = instigator;
             _Level = level;
+            _Strength = strength;
         }
 
-        public virtual void ForceOverlapEffect(int level) 
+        public virtual void Copy(IGameplayEffectSpec effectSpec)
         {
-            OnOverlapEffect(level);
+
         }
 
-        public bool CanOverlapEffect(int level)
+        public void ForceOverlapEffect(IGameplayEffectSpec spec) 
         {
-            return level > Level;
+            OnOverlapEffect(spec);
+        }
+
+        public virtual bool CanOverlapEffect(IGameplayEffectSpec spec)
+        {
+            return false;
         }
 
         public virtual bool CanRemoveEffectFromSource(object source)
@@ -68,11 +77,11 @@ namespace StudioScor.GameplayEffectSystem
             return false;
         }
 
-        public bool TryOverlapEffect(int level)
+        public bool TryOverlapEffect(IGameplayEffectSpec spec)
         {
-            if(CanOverlapEffect(level))
+            if(CanOverlapEffect(spec))
             {
-                ForceOverlapEffect(level);
+                ForceOverlapEffect(spec);
 
                 return true;
             }
@@ -99,7 +108,7 @@ namespace StudioScor.GameplayEffectSystem
 
         public virtual bool CanTakeEffect()
         {
-            return true;
+            return !IsActivate;
         }
 
         public void ForceTakeEffect()
@@ -152,8 +161,11 @@ namespace StudioScor.GameplayEffectSystem
         }
         public void EndEffect()
         {
-            Log(" End Effect ");
+            if (!_IsActivate)
+                return;
 
+            Log(" End Effect ");
+            
             _IsActivate = false;
 
             OnFInishEffect();
@@ -162,6 +174,9 @@ namespace StudioScor.GameplayEffectSystem
         }
         public void ForceRemoveEffect()
         {
+            if (!_IsActivate)
+                return;
+
             Log(" Force Remmove Effect ");
 
             _IsActivate = false;
@@ -177,7 +192,7 @@ namespace StudioScor.GameplayEffectSystem
         protected virtual void OnFInishEffect() { }
         protected virtual void OnCancelEffect() { }
         protected virtual void OnChangeLevel(int prevLevel) { }
-        protected virtual void OnOverlapEffect(int level) { }
+        protected virtual void OnOverlapEffect(IGameplayEffectSpec spec) { }
 
         
         #region Callback
