@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Pool;
 using StudioScor.Utilities;
 
 namespace StudioScor.GameplayEffectSystem
@@ -28,7 +29,28 @@ namespace StudioScor.GameplayEffectSystem
         
         public EGameplayEffectType Type => _EffectType;
         public float Duration => _Duration;
-        public abstract IGameplayEffectSpec CreateSpec(IGameplayEffectSystem owner, IGameplayEffectSystem instigator, int level = 0, float strength = 0f, object data = null);
+
+        private ObjectPool<IGameplayEffectSpec> _Pool;
+
+        public IGameplayEffectSpec CreateSpec(IGameplayEffectSystem gameplayEffectSystem, int level = 0, object data = null)
+        {
+            if (_Pool is null)
+                _Pool = new(OnCreateSpec);
+
+            var spec = _Pool.Get();
+
+            spec.SetupSpec(gameplayEffectSystem, level, data);
+
+            return spec;
+        }
+
+        public void ReleaseSpec(IGameplayEffectSpec spec)
+        {
+            _Pool.Release(spec);
+        }
+
+        protected abstract IGameplayEffectSpec OnCreateSpec();
+
     }
 }
 

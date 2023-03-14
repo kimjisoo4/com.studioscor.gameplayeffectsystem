@@ -3,15 +3,13 @@
     public interface IGameplayEffectSpec
     {
         public GameplayEffect GameplayEffect { get; }
-        public IGameplayEffectSystem Owner { get; }
-        public IGameplayEffectSystem Instigator { get; }
+        public IGameplayEffectSystem GameplayEffectSystem { get; }
 
         public bool IsActivate { get; }
         public int Level { get; }
-        public float Strength { get; }
         public float RemainTime { get; }
 
-        public void SetupSpec(IGameplayEffectSystem owner, IGameplayEffectSystem instigator, int level = 0, float strength = 0f, object data = default);
+        public void SetupSpec(IGameplayEffectSystem gameplayEffectSystem, int level = 0, object data = default);
 
         public void Copy(IGameplayEffectSpec effectSpec);
         public bool CanTakeEffect();

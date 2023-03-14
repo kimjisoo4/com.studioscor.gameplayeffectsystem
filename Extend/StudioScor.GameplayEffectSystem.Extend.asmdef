@@ -1,7 +1,8 @@
 {
-    "name": "StudioScor.GameplayEffectSystem",
+    "name": "StudioScor.GameplayEffectSystem.Extend",
     "rootNamespace": "StudioScor.GameplayEffectSystem",
     "references": [
+        "GUID:35513184bef033a45a743bdb8c92b73f",
         "GUID:0e56af4e027762c43b7508efc3b00495",
         "GUID:2a2d341d7e231f74d8c9f2adfaaa67f6",
         "GUID:e9dd1263e2a75664681caedc1b70ce84"
@@ -13,6 +14,17 @@
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [],
-    "versionDefines": [],
+    "versionDefines": [
+        {
+            "name": "com.studioscor.abilitysystem",
+            "expression": "0.0.0",
+            "define": "SCOR_ENABLE_ABILITYSYSTEM"
+        },
+        {
+            "name": "com.studioscor.gameplaytagsystem",
+            "expression": "0.0.0",
+            "define": "SCOR_ENABLE_GAMEPLAYTAGSYSTEM"
+        }
+    ],
     "noEngineReferences": false
 }

@@ -20,7 +20,7 @@ namespace StudioScor.GameplayEffectSystem.Editor
 
                 var effectSystem = (GameplayEffectSystemComponent)target;
 
-                var effects = effectSystem.Effects;
+                var effects = effectSystem.GameplayEffects;
 
                 GUIStyle title = new();
                 GUIStyle normal = new();

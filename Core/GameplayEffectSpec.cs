@@ -9,25 +9,23 @@ namespace StudioScor.GameplayEffectSystem
     public delegate void EffectSpecStateHandler(IGameplayEffectSpec effectSpec);
     public delegate void EffectSpecLevelStateHandler(IGameplayEffectSpec effectSpec, int currentLevel, int prevLevel);
 
-    public abstract partial class GameplayEffectSpec<T> : BaseClass, IGameplayEffectSpec where T : GameplayEffect
+    public abstract partial class GameplayEffectSpec : BaseClass, IGameplayEffectSpec
     {
-        protected readonly T _GameplayEffect;
+        protected readonly GameplayEffect _GameplayEffect;
 
-        private IGameplayEffectSystem _Owner;
-        private IGameplayEffectSystem _Instigator;
+        private IGameplayEffectSystem _GameplayEffectSystem;
 
         private bool _IsActivate = false;
 
         protected int _Level;
-        protected float _Strength;
         protected float _RemainTime;
+        protected bool _UsePool = false;
 
         public GameplayEffect GameplayEffect => _GameplayEffect;
-        public IGameplayEffectSystem Owner => _Owner;
-        public IGameplayEffectSystem Instigator => _Instigator;
+        public IGameplayEffectSystem GameplayEffectSystem => _GameplayEffectSystem;
+
         public bool IsActivate => _IsActivate;
         public int Level => _Level;
-        public float Strength => _Strength;
         public float RemainTime => _RemainTime;
 
 #if UNITY_EDITOR
@@ -44,22 +42,25 @@ namespace StudioScor.GameplayEffectSystem
 
         public event EffectSpecLevelStateHandler OnChangedEffectLevel;
 
-        public GameplayEffectSpec(T gameplayEffect)
+        public GameplayEffectSpec(GameplayEffect gameplayEffect)
         {
             _GameplayEffect = gameplayEffect;
         }
 
-        public virtual void SetupSpec(IGameplayEffectSystem owner, IGameplayEffectSystem instigator, int level = 0, float strength = 0f, object data = default)
+        public virtual void SetupSpec(IGameplayEffectSystem gameplayEffectSystem, int level = 0, object data = default)
         {
-            _Owner = owner;
-            _Instigator = instigator;
+            _GameplayEffectSystem = gameplayEffectSystem;
             _Level = level;
-            _Strength = strength;
         }
 
         public virtual void Copy(IGameplayEffectSpec effectSpec)
         {
 
+        }
+
+        public void SetUsePool()
+        {
+            _UsePool = true;
         }
 
         public void ForceOverlapEffect(IGameplayEffectSpec spec) 
