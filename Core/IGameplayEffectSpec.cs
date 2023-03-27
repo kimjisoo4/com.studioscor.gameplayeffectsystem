@@ -8,6 +8,7 @@
         public bool IsActivate { get; }
         public int Level { get; }
         public float RemainTime { get; }
+        public object Data { get; }
 
         public void SetupSpec(IGameplayEffectSystem gameplayEffectSystem, int level = 0, object data = default);
 

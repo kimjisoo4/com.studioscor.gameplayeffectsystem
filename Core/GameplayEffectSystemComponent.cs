@@ -62,7 +62,7 @@ namespace StudioScor.GameplayEffectSystem
         {
             float deltaTime = Time.deltaTime;
 
-            for(int i = GameplayEffects.Count - 1; i >= 0; i --)
+            for(int i = GameplayEffects.LastIndex(); i >= 0; i --)
             {
                 GameplayEffects[i].UpdateEffect(deltaTime);
 

@@ -18,6 +18,7 @@ namespace StudioScor.GameplayEffectSystem
         private bool _IsActivate = false;
 
         protected int _Level;
+        protected object _Data;
         protected float _RemainTime;
         protected bool _UsePool = false;
 
@@ -27,6 +28,8 @@ namespace StudioScor.GameplayEffectSystem
         public bool IsActivate => _IsActivate;
         public int Level => _Level;
         public float RemainTime => _RemainTime;
+
+        public object Data => _Data;
 
 #if UNITY_EDITOR
         public override bool UseDebug => GameplayEffect.UseDebug;
@@ -51,6 +54,7 @@ namespace StudioScor.GameplayEffectSystem
         {
             _GameplayEffectSystem = gameplayEffectSystem;
             _Level = level;
+            _Data = data;
         }
 
         public virtual void Copy(IGameplayEffectSpec effectSpec)
