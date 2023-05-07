@@ -25,8 +25,10 @@ namespace StudioScor.GameplayEffectSystem
     {
         [Header(" [ Gameplay Effect ]")]
         [SerializeField] protected EGameplayEffectType _EffectType;
+        [SerializeField][SEnumCondition(nameof(_EffectType), (int)EGameplayEffectType.Duration, (int)EGameplayEffectType.Infinity)] private bool _IsUnscaled = false;
         [SerializeField][SEnumCondition(nameof(_EffectType), (int)EGameplayEffectType.Duration)] protected float _Duration = 5f;
-        
+
+        public bool IsUnscaled => _IsUnscaled;
         public EGameplayEffectType Type => _EffectType;
         public float Duration => _Duration;
 

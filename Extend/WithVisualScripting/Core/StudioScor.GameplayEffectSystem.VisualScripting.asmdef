@@ -1,10 +1,10 @@
 {
-    "name": "StudioScor.EffectSystem.VisualScripting",
-    "rootNamespace": "StudioScor.EffectSystem.VisualScripting",
+    "name": "StudioScor.GameplayEffectSystem.VisualScripting",
+    "rootNamespace": "StudioScor.GameplayEffectSystem.VisualScripting",
     "references": [
         "GUID:35513184bef033a45a743bdb8c92b73f",
         "GUID:0e56af4e027762c43b7508efc3b00495",
-        "GUID:bbf02dfe599168243a8990cc1db989cc",
+        "GUID:86e142e42ae369045bd4eecea14b3e0a",
         "GUID:21b0c8d1703a94250bfac916590cea4f",
         "GUID:ea715009a4efd4c6cbc85be3ae097dd3",
         "GUID:315d634a9ac6d460a9515f5a56be6311"

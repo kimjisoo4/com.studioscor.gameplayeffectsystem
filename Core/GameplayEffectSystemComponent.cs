@@ -4,9 +4,16 @@ using StudioScor.Utilities;
 
 namespace StudioScor.GameplayEffectSystem
 {
+    public delegate void ChangeGameplayEffectHandler(GameplayEffectSystemComponent effectSystem, IGameplayEffectSpec effectSpec);
+
     public interface IGameplayEffectSystem
     {
         public Transform transform { get; }
+        public GameObject gameObject { get; }
+
+        public float PlaySpeed { get; }
+        public void SetPlaySpeed(float newSpeed);
+
         public bool TryGetGameplayEffectSpec(GameplayEffect gameplayEffect, out IGameplayEffectSpec spec);
 
         public bool TryTakeEffectToOther(GameplayEffect effect, int level = 0, object data = null);
@@ -17,15 +24,21 @@ namespace StudioScor.GameplayEffectSystem
         public void RemoveEffectFromSource(object source);
     }
 
-    [AddComponentMenu("StudioScor/GameplayEffectSystem/GameplayEffect System Component", order: 0)]
-    public class GameplayEffectSystemComponent : BaseMonoBehaviour, IGameplayEffectSystem
+    public interface IGameplayEffectSystemEvent
     {
-        #region Event
-        public delegate void ChangeGameplayEffectHandler(GameplayEffectSystemComponent effectSystem, IGameplayEffectSpec effectSpec);
-        #endregion
+        public event ChangeGameplayEffectHandler OnGrantedEffect;
+        public event ChangeGameplayEffectHandler OnRemovedEffect;
+    }
+
+    [AddComponentMenu("StudioScor/GameplayEffectSystem/GameplayEffect System Component", order: 0)]
+    public class GameplayEffectSystemComponent : BaseMonoBehaviour, IGameplayEffectSystem, IGameplayEffectSystemEvent
+    {
 
         [Header(" [ Effect System ] ")]
         private List<IGameplayEffectSpec> _GameplayEffects;
+        [SerializeField] private float _PlaySpeed = 1f;
+
+        public float PlaySpeed => _PlaySpeed;
         public IReadOnlyList<IGameplayEffectSpec> GameplayEffects => _GameplayEffects;
 
         public event ChangeGameplayEffectHandler OnGrantedEffect;
@@ -62,7 +75,7 @@ namespace StudioScor.GameplayEffectSystem
         {
             float deltaTime = Time.deltaTime;
 
-            for(int i = GameplayEffects.LastIndex(); i >= 0; i --)
+            for (int i = GameplayEffects.LastIndex(); i >= 0; i--)
             {
                 GameplayEffects[i].UpdateEffect(deltaTime);
 
@@ -71,6 +84,11 @@ namespace StudioScor.GameplayEffectSystem
                     RemoveEffectSpec(_GameplayEffects[i]);
                 }
             }
+        }
+
+        public void SetPlaySpeed(float newSpeed)
+        {
+            _PlaySpeed = newSpeed;
         }
 
         public bool ContainEffect(GameplayEffect containEffect)

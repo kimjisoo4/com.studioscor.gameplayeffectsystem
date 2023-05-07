@@ -12,8 +12,7 @@ namespace StudioScor.GameplayEffectSystem
     public abstract partial class GameplayEffectSpec : BaseClass, IGameplayEffectSpec
     {
         protected readonly GameplayEffect _GameplayEffect;
-
-        private IGameplayEffectSystem _GameplayEffectSystem;
+        protected IGameplayEffectSystem _GameplayEffectSystem;
 
         private bool _IsActivate = false;
 
@@ -151,6 +150,9 @@ namespace StudioScor.GameplayEffectSystem
         {
             if (!IsActivate && GameplayEffect.Type.Equals(EGameplayEffectType.Instante))
                 return;
+
+            if (!_GameplayEffect.IsUnscaled)
+                deltaTime *= _GameplayEffectSystem.PlaySpeed;
 
             OnUpdateEffect(deltaTime);
 
