@@ -27,38 +27,29 @@ namespace StudioScor.GameplayEffectSystem
     public abstract class GASGameplayEffect : GameplayEffect, IGASGameplayEffect
     {
         [Header(" [ Character Effect ] ")]
-        [SerializeField] private GameplayTag _EffectTag;
-        [SerializeField] private GameplayTag[] _AttributeTags;
-        [SerializeField] private FConditionTags _ConditionTags;
-        [SerializeField] private FGameplayTags _GrantTags;
-        [SerializeField] private GameplayTag[] _CancelEffectTags;
-        public GameplayTag EffectTag => _EffectTag;
-        public IReadOnlyCollection<GameplayTag> AttributeTags => _AttributeTags;
-        public FConditionTags ConditionTags => _ConditionTags;
-        public FGameplayTags GrantTags => _GrantTags;
-        public IReadOnlyCollection<GameplayTag> CancelEffectTags => _CancelEffectTags;
+        [SerializeField]private GameplayTag effectTag;
+        [SerializeField]private GameplayTag[] attributeTags;
+        [SerializeField] private FConditionTags conditionTags;
+        [SerializeField] private FGameplayTags grantTags;
+        [SerializeField] private GameplayTag[] cancelEffectTags;
+        public GameplayTag EffectTag => effectTag;
+        public IReadOnlyCollection<GameplayTag> AttributeTags => attributeTags;
+        public FConditionTags ConditionTags => conditionTags;
+        public FGameplayTags GrantTags => grantTags;
+        public IReadOnlyCollection<GameplayTag> CancelEffectTags => cancelEffectTags;
     }
 
     public abstract class GASGameplayEffectSpec : GameplayEffectSpec
     {
-        private readonly IGASGameplayEffect _GASEffect;
-        private IGameplayTagSystem _GameplayTagSystem;
+        protected new GASGameplayEffect gameplayEffect;
+        protected IGameplayTagSystem gameplayTagSystem;
 
-        public IGASGameplayEffect GASEffect => _GASEffect;
-        public IGameplayTagSystem GameplayTagSystem => _GameplayTagSystem;
-
-
-
-        protected GASGameplayEffectSpec(GameplayEffect effect) : base(effect)
+        public override void SetupSpec(GameplayEffect gameplayEffect, IGameplayEffectSystem gameplayEffectSystem, int level = 0, object data = null)
         {
-            _GASEffect = effect as IGASGameplayEffect;
-        }
+            base.SetupSpec(gameplayEffect, gameplayEffectSystem, level, data);
 
-        public override void SetupSpec(IGameplayEffectSystem gameplayEffectSystem, int level = 0, object data = null)
-        {
-            base.SetupSpec(gameplayEffectSystem, level, data);
-
-            _GameplayTagSystem = gameplayEffectSystem.transform.GetComponent<IGameplayTagSystem>();
+            this.gameplayEffect = gameplayEffect as GASGameplayEffect;
+            gameplayTagSystem = gameplayEffectSystem.gameObject.GetGameplayTagSystem();
         }
 
         public override bool CanTakeEffect()
@@ -66,28 +57,22 @@ namespace StudioScor.GameplayEffectSystem
             if (!base.CanTakeEffect())
                 return false;
 
-            if (GameplayTagSystem.ContainBlockTag(GASEffect.EffectTag))
+            if (gameplayTagSystem.ContainBlockTag(gameplayEffect.EffectTag))
             {
                 Log($"Block Effect Tag");
 
                 return false;
             }
-            if (GameplayTagSystem.ContainAnyTagsInBlock(GASEffect.AttributeTags))
+            if (gameplayTagSystem.ContainAnyTagsInBlock(gameplayEffect.AttributeTags))
             {
                 Log($"Block Atrribute Tags");
 
                 return false;
             }
 
-            if (!GameplayTagSystem.ContainAllTagsInOwned(GASEffect.ConditionTags.Requireds))
+            if(!gameplayTagSystem.ContainConditionTags(gameplayEffect.ConditionTags))
             {
-                Log($"Not Contained All Reauired Tags In Owned");
-
-                return false;
-            }
-            if (GameplayTagSystem.ContainAnyTagsInOwned(GASEffect.ConditionTags.Obstacleds))
-            {
-                Log($"Contained Any Obstacled Tags In Owned");
+                Log($"Contain Condition Tags is False");
 
                 return false;
             }
@@ -95,7 +80,7 @@ namespace StudioScor.GameplayEffectSystem
             return true;
         }
 
-        public override bool CanRemoveEffectFromSource(object source)
+        public override bool CancelEffectFromSource(object source)
         {
             Log(" Can Remove Effect From Source ? ");
 
@@ -104,16 +89,16 @@ namespace StudioScor.GameplayEffectSystem
             if (gameplayTags is null)
                 return false;
 
-            if (gameplayTags.Contains(GASEffect.EffectTag))
+            if (gameplayTags.Contains(gameplayEffect.EffectTag))
             {
-                Log($"Remove Effect From Source Contain EffectTag [{GASEffect.EffectTag.name}]");
+                Log($"Remove Effect From Source Contain EffectTag [{gameplayEffect.EffectTag.name}]");
 
                 return true;
             }
 
             foreach (var tag in gameplayTags)
             {
-                if (GASEffect.AttributeTags.Contains(tag))
+                if (gameplayEffect.AttributeTags.Contains(tag))
                 {
                     Log($"Remove Effect From Source [{tag.name}]");
 
@@ -126,19 +111,14 @@ namespace StudioScor.GameplayEffectSystem
 
         protected override void OnEnterEffect()
         {
-            GameplayEffectSystem.RemoveEffectFromSource(GASEffect.CancelEffectTags);
+            GameplayEffectSystem.CancelEffectFromSource(gameplayEffect.CancelEffectTags);
 
-            GameplayTagSystem.AddOwnedTags(GASEffect.GrantTags.Owneds);
-            GameplayTagSystem.AddBlockTags(GASEffect.GrantTags.Blocks);
+            gameplayTagSystem.GrantGameplayTags(gameplayEffect.GrantTags);
 
         }
         protected override void OnExitEffect()
         {
-            GameplayTagSystem.RemoveOwnedTags(GASEffect.GrantTags.Owneds);
-            GameplayTagSystem.RemoveBlockTags(GASEffect.GrantTags.Blocks);
-
-            if (_UsePool)
-                _GameplayEffect.ReleaseSpec(this);
+            gameplayTagSystem.RemoveGameplayTags(gameplayEffect.GrantTags);
         }
     }
 }

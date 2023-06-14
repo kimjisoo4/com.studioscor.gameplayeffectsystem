@@ -24,35 +24,13 @@ namespace StudioScor.GameplayEffectSystem
     public abstract partial class GameplayEffect : BaseScriptableObject
     {
         [Header(" [ Gameplay Effect ]")]
-        [SerializeField] protected EGameplayEffectType _EffectType;
-        [SerializeField][SEnumCondition(nameof(_EffectType), (int)EGameplayEffectType.Duration, (int)EGameplayEffectType.Infinity)] private bool _IsUnscaled = false;
-        [SerializeField][SEnumCondition(nameof(_EffectType), (int)EGameplayEffectType.Duration)] protected float _Duration = 5f;
+        [SerializeField] protected EGameplayEffectType effectType;
+        [SerializeField][SEnumCondition(nameof(effectType), (int)EGameplayEffectType.Duration)] protected float duration = 5f;
 
-        public bool IsUnscaled => _IsUnscaled;
-        public EGameplayEffectType Type => _EffectType;
-        public float Duration => _Duration;
+        public EGameplayEffectType Type => effectType;
+        public float Duration => duration;
 
-        private ObjectPool<IGameplayEffectSpec> _Pool;
-
-        public IGameplayEffectSpec CreateSpec(IGameplayEffectSystem gameplayEffectSystem, int level = 0, object data = null)
-        {
-            if (_Pool is null)
-                _Pool = new(OnCreateSpec);
-
-            var spec = _Pool.Get();
-
-            spec.SetupSpec(gameplayEffectSystem, level, data);
-
-            return spec;
-        }
-
-        public void ReleaseSpec(IGameplayEffectSpec spec)
-        {
-            _Pool.Release(spec);
-        }
-
-        protected abstract IGameplayEffectSpec OnCreateSpec();
-
+        public abstract IGameplayEffectSpec CreateSpec(IGameplayEffectSystem gameplayEffectSystem, int level = 0, object data = default);
     }
 }
 
