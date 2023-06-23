@@ -24,7 +24,6 @@ namespace StudioScor.GameplayEffectSystem
         public bool IsActivate => isActivate;
         public int Level => level;
         public float RemainTime => remainTime;
-
         public object Data => data;
 
 #if UNITY_EDITOR
@@ -150,7 +149,7 @@ namespace StudioScor.GameplayEffectSystem
             if (!GameplayEffect.Type.Equals(EGameplayEffectType.Duration))
                 return;
 
-            remainTime -= deltaTime;
+            remainTime -= gameplayEffect.UseSpeed ? deltaTime * gameplayEffectSystem.Speed : deltaTime;
 
             if(remainTime <= 0f)
             {

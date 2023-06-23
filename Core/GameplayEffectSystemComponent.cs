@@ -8,7 +8,7 @@ namespace StudioScor.GameplayEffectSystem
 
     public static class GameplayEffectSystemUtility
     {
-        #region Get
+        #region Get GameplayEffectSystem
         public static IGameplayEffectSystem GetGameplayEffectSystem(this GameObject gameObject)
         {
             return gameObject.GetComponent<IGameplayEffectSystem>();
@@ -32,31 +32,6 @@ namespace StudioScor.GameplayEffectSystem
                 return true;
 
             return component.TryGetComponent(out gameplayEffectSystem);
-        }
-
-        public static IGameplayEffectSystemEvent GetGameplayEffectSystemEvent(this GameObject gameObject)
-        {
-            return gameObject.GetComponent<IGameplayEffectSystemEvent>();
-        }
-        public static IGameplayEffectSystemEvent GetGameplayEffectSystemEvent(this Component component)
-        {
-            if (component is IGameplayEffectSystemEvent gameplayEffecSystem)
-                return gameplayEffecSystem;
-
-            return component.GetComponent<IGameplayEffectSystemEvent>();
-        }
-        public static bool TryGetGameplayEffectSystemEvent(this GameObject gameObject, out IGameplayEffectSystemEvent gameplayEffectSystemEvent)
-        {
-            return gameObject.TryGetComponent(out gameplayEffectSystemEvent);
-        }
-        public static bool TryGetGameplayEffectSystemEvent(this Component component, out IGameplayEffectSystemEvent gameplayEffectSystemEvent)
-        {
-            gameplayEffectSystemEvent = component as IGameplayEffectSystemEvent;
-
-            if (gameplayEffectSystemEvent is not null)
-                return true;
-
-            return component.TryGetComponent(out gameplayEffectSystemEvent);
         }
         #endregion
 
@@ -94,35 +69,71 @@ namespace StudioScor.GameplayEffectSystem
     {
         public Transform transform { get; }
         public GameObject gameObject { get; }
+
+        public float Speed { get; }
+        public void SetSpeed(float newSpeed);
+
         public IReadOnlyList<IGameplayEffectSpec> GameplayEffects { get; }
 
         public bool TryTakeEffect(GameplayEffect effect, int level, object data);
-
         public void CancelEffect(GameplayEffect effect);
         public void CancelEffectFromSource(object source);
         public void CancelAllEffect();
-    }
 
-    public interface IGameplayEffectSystemEvent
-    {
         public event ChangeGameplayEffectHandler OnGrantedEffect;
         public event ChangeGameplayEffectHandler OnRemovedEffect;
     }
 
-    [AddComponentMenu("StudioScor/GameplayEffectSystem/GameplayEffect System Component", order: 0)]
-    public class GameplayEffectSystemComponent : BaseMonoBehaviour, IGameplayEffectSystem, IGameplayEffectSystemEvent
+    [System.Serializable]
+    public struct FGameplayEffect
     {
+        public string EffectName;
+        public GameplayEffect GameplayEffect;
+        public int Level;
+    }
 
-        [Header(" [ Effect System ] ")]
+    [AddComponentMenu("StudioScor/GameplayEffectSystem/GameplayEffect System Component", order: 0)]
+    public class GameplayEffectSystemComponent : BaseMonoBehaviour, IGameplayEffectSystem
+    {
+        [Header(" [ Gameplay Effect System ] ")]
+        [SerializeField] private FGameplayEffect[] initGameplayEffects;
+        [SerializeField][Min(0f)] private float speed = 1f;
+
         private List<IGameplayEffectSpec> gameplayEffects;
+
+        public float Speed => speed;
         public IReadOnlyList<IGameplayEffectSpec> GameplayEffects => gameplayEffects;
 
         public event ChangeGameplayEffectHandler OnGrantedEffect;
         public event ChangeGameplayEffectHandler OnRemovedEffect;
 
+        private void OnValidate()
+        {
+#if UNITY_EDITOR
+            if(initGameplayEffects is not null && initGameplayEffects.Length > 0)
+            {
+                for(int i = 0; i < initGameplayEffects.Length; i++)
+                {
+                    if(initGameplayEffects[i].GameplayEffect)
+                    {
+                        initGameplayEffects[i].EffectName = initGameplayEffects[i].GameplayEffect.name;
+                    }
+                }
+            }
+#endif
+        }
+        
         private void Awake()
         {
             Setup();
+        }
+
+        void Start()
+        {
+            foreach(var initGameplayEffect in initGameplayEffects)
+            {
+                TryTakeEffect(initGameplayEffect.GameplayEffect, initGameplayEffect.Level, null);
+            }
         }
 
         protected void Setup()
@@ -158,8 +169,16 @@ namespace StudioScor.GameplayEffectSystem
             }
         }
 
+        public void SetSpeed(float newSpeed)
+        {
+            speed = newSpeed;
+        }
+
         public bool TryTakeEffect(GameplayEffect effect, int level = 0, object data = default)
         {
+            if (!effect)
+                return false;
+
             var spec = effect.CreateSpec(this, level, data);
 /*
             if (this.TryGetGameplayEffectSpec(effect, out IGameplayEffectSpec containSpec))
