@@ -144,16 +144,20 @@ namespace StudioScor.GameplayEffectSystem
             if (!IsActivate && GameplayEffect.Type.Equals(EGameplayEffectType.Instante))
                 return;
 
-            OnUpdateEffect(deltaTime);
-
-            if (!GameplayEffect.Type.Equals(EGameplayEffectType.Duration))
-                return;
-
-            remainTime -= gameplayEffect.UseSpeed ? deltaTime * gameplayEffectSystem.Speed : deltaTime;
-
-            if(remainTime <= 0f)
+            if (GameplayEffect.Type.Equals(EGameplayEffectType.Duration))
             {
-                EndEffect();
+                remainTime -= gameplayEffect.UseSpeed ? deltaTime * gameplayEffectSystem.Speed : deltaTime;
+
+                OnUpdateEffect(deltaTime);
+
+                if (remainTime <= 0f)
+                {
+                    EndEffect();
+                }
+            }
+            else
+            {
+                OnUpdateEffect(deltaTime);
             }
         }
         public void EndEffect()
