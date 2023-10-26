@@ -7,7 +7,7 @@ namespace StudioScor.GameplayEffectSystem
     public delegate void EffectSpecStateHandler(IGameplayEffectSpec effectSpec);
     public delegate void EffectSpecLevelStateHandler(IGameplayEffectSpec effectSpec, int currentLevel, int prevLevel);
 
-    public abstract partial class GameplayEffectSpec : BaseClass, IGameplayEffectSpec
+    public abstract class GameplayEffectSpec : BaseClass, IGameplayEffectSpec
     {
         protected GameplayEffect gameplayEffect;
         protected IGameplayEffectSystem gameplayEffectSystem;
@@ -20,7 +20,6 @@ namespace StudioScor.GameplayEffectSystem
 
         public GameplayEffect GameplayEffect => gameplayEffect;
         public IGameplayEffectSystem GameplayEffectSystem => gameplayEffectSystem;
-
         public bool IsActivate => isActivate;
         public int Level => level;
         public float RemainTime => remainTime;

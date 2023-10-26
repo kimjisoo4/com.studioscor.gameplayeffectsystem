@@ -75,7 +75,7 @@ namespace StudioScor.GameplayEffectSystem
 
         public IReadOnlyList<IGameplayEffectSpec> GameplayEffects { get; }
 
-        public bool TryTakeEffect(GameplayEffect effect, int level, object data);
+        public bool TryTakeEffect(GameplayEffect effect, int level = 0, object data = default);
         public void CancelEffect(GameplayEffect effect);
         public void CancelEffectFromSource(object source);
         public void CancelAllEffect();
