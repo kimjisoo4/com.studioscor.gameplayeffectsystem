@@ -70,7 +70,7 @@ namespace StudioScor.GameplayEffectSystem
         public Transform transform { get; }
         public GameObject gameObject { get; }
 
-        public float Speed { get; }
+        public float TimeScale { get; }
         public void SetSpeed(float newSpeed);
 
         public IReadOnlyList<IGameplayEffectSpec> GameplayEffects { get; }
@@ -97,11 +97,11 @@ namespace StudioScor.GameplayEffectSystem
     {
         [Header(" [ Gameplay Effect System ] ")]
         [SerializeField] private FGameplayEffect[] initGameplayEffects;
-        [SerializeField][Min(0f)] private float speed = 1f;
+        [SerializeField][Min(0f)] private float timeScale = 1f;
 
         private List<IGameplayEffectSpec> gameplayEffects;
 
-        public float Speed => speed;
+        public float TimeScale => timeScale;
         public IReadOnlyList<IGameplayEffectSpec> GameplayEffects => gameplayEffects;
 
         public event ChangeGameplayEffectHandler OnGrantedEffect;
@@ -171,7 +171,7 @@ namespace StudioScor.GameplayEffectSystem
 
         public void SetSpeed(float newSpeed)
         {
-            speed = newSpeed;
+            timeScale = newSpeed;
         }
 
         public bool TryTakeEffect(GameplayEffect effect, int level = 0, object data = default)
@@ -180,17 +180,7 @@ namespace StudioScor.GameplayEffectSystem
                 return false;
 
             var spec = effect.CreateSpec(this, level, data);
-/*
-            if (this.TryGetGameplayEffectSpec(effect, out IGameplayEffectSpec containSpec))
-            {
-                if (containSpec.TryOverlapEffect(spec))
-                {
-                    Log("Override Effect - " + effect.name);
 
-                    return true;
-                }
-            }
-*/
             if (spec.TryTakeEffect())
             {
                 Callback_OnGrantedEffect(spec);

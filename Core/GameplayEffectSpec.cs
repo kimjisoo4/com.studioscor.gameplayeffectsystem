@@ -26,8 +26,8 @@ namespace StudioScor.GameplayEffectSystem
         public object Data => data;
 
 #if UNITY_EDITOR
-        public override bool UseDebug => GameplayEffect.UseDebug;
-        public override Object Context => gameplayEffect;
+        protected override bool UseDebug => GameplayEffect.UseDebug;
+        protected override Object Context => gameplayEffect;
 #endif
 
         public event EffectSpecStateHandler OnActivateEffect;
@@ -145,7 +145,7 @@ namespace StudioScor.GameplayEffectSystem
 
             if (GameplayEffect.Type.Equals(EGameplayEffectType.Duration))
             {
-                remainTime -= gameplayEffect.UseSpeed ? deltaTime * gameplayEffectSystem.Speed : deltaTime;
+                remainTime -= gameplayEffect.UnscaledTime ? deltaTime  : deltaTime * gameplayEffectSystem.TimeScale;
 
                 OnUpdateEffect(deltaTime);
 

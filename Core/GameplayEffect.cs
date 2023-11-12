@@ -9,12 +9,13 @@ namespace StudioScor.GameplayEffectSystem
         [Header(" [ Gameplay Effect ]")]
         [SerializeField] protected EGameplayEffectType effectType;
         [SerializeField][SEnumCondition(nameof(effectType), (int)EGameplayEffectType.Duration)] protected float duration = 5f;
-        [SerializeField] protected bool useSpeed = true;
+        [SerializeField] protected bool unscaledTime = false;
 
         public EGameplayEffectType Type => effectType;
         public float Duration => duration;
 
-        public bool UseSpeed => useSpeed;
+
+        public bool UnscaledTime => unscaledTime;
 
         public abstract IGameplayEffectSpec CreateSpec(IGameplayEffectSystem gameplayEffectSystem, int level = 0, object data = default);
     }
