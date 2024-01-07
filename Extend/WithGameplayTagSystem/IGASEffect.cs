@@ -41,15 +41,15 @@ namespace StudioScor.GameplayEffectSystem
 
     public abstract class GASGameplayEffectSpec : GameplayEffectSpec
     {
-        protected new GASGameplayEffect gameplayEffect;
-        protected IGameplayTagSystem gameplayTagSystem;
+        protected new GASGameplayEffect _gameplayEffect;
+        protected IGameplayTagSystem _gameplayTagSystem;
 
         public override void SetupSpec(GameplayEffect gameplayEffect, IGameplayEffectSystem gameplayEffectSystem, int level = 0, object data = null)
         {
             base.SetupSpec(gameplayEffect, gameplayEffectSystem, level, data);
 
-            this.gameplayEffect = gameplayEffect as GASGameplayEffect;
-            gameplayTagSystem = gameplayEffectSystem.gameObject.GetGameplayTagSystem();
+            this._gameplayEffect = gameplayEffect as GASGameplayEffect;
+            _gameplayTagSystem = gameplayEffectSystem.gameObject.GetGameplayTagSystem();
         }
 
         public override bool CanTakeEffect()
@@ -57,20 +57,20 @@ namespace StudioScor.GameplayEffectSystem
             if (!base.CanTakeEffect())
                 return false;
 
-            if (gameplayTagSystem.ContainBlockTag(gameplayEffect.EffectTag))
+            if (_gameplayTagSystem.ContainBlockTag(_gameplayEffect.EffectTag))
             {
                 Log($"Block Effect Tag");
 
                 return false;
             }
-            if (gameplayTagSystem.ContainAnyTagsInBlock(gameplayEffect.AttributeTags))
+            if (_gameplayTagSystem.ContainAnyTagsInBlock(_gameplayEffect.AttributeTags))
             {
                 Log($"Block Atrribute Tags");
 
                 return false;
             }
 
-            if(!gameplayTagSystem.ContainConditionTags(gameplayEffect.ConditionTags))
+            if(!_gameplayTagSystem.ContainConditionTags(_gameplayEffect.ConditionTags))
             {
                 Log($"Contain Condition Tags is False");
 
@@ -89,16 +89,16 @@ namespace StudioScor.GameplayEffectSystem
             if (gameplayTags is null)
                 return false;
 
-            if (gameplayTags.Contains(gameplayEffect.EffectTag))
+            if (gameplayTags.Contains(_gameplayEffect.EffectTag))
             {
-                Log($"Remove Effect From Source Contain EffectTag [{gameplayEffect.EffectTag.name}]");
+                Log($"Remove Effect From Source Contain EffectTag [{_gameplayEffect.EffectTag.name}]");
 
                 return true;
             }
 
             foreach (var tag in gameplayTags)
             {
-                if (gameplayEffect.AttributeTags.Contains(tag))
+                if (_gameplayEffect.AttributeTags.Contains(tag))
                 {
                     Log($"Remove Effect From Source [{tag.name}]");
 
@@ -111,14 +111,14 @@ namespace StudioScor.GameplayEffectSystem
 
         protected override void OnEnterEffect()
         {
-            GameplayEffectSystem.CancelEffectFromSource(gameplayEffect.CancelEffectTags);
+            GameplayEffectSystem.CancelEffectFromSource(_gameplayEffect.CancelEffectTags);
 
-            gameplayTagSystem.GrantGameplayTags(gameplayEffect.GrantTags);
+            _gameplayTagSystem.GrantGameplayTags(_gameplayEffect.GrantTags);
 
         }
         protected override void OnExitEffect()
         {
-            gameplayTagSystem.RemoveGameplayTags(gameplayEffect.GrantTags);
+            _gameplayTagSystem.RemoveGameplayTags(_gameplayEffect.GrantTags);
         }
     }
 }

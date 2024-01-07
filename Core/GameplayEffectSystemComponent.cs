@@ -70,11 +70,9 @@ namespace StudioScor.GameplayEffectSystem
         public Transform transform { get; }
         public GameObject gameObject { get; }
 
-        public float TimeScale { get; }
-        public void SetSpeed(float newSpeed);
-
         public IReadOnlyList<IGameplayEffectSpec> GameplayEffects { get; }
 
+        public void Tick(float deltaTime);
         public bool TryTakeEffect(GameplayEffect effect, int level = 0, object data = default);
         public void CancelEffect(GameplayEffect effect);
         public void CancelEffectFromSource(object source);
@@ -97,11 +95,7 @@ namespace StudioScor.GameplayEffectSystem
     {
         [Header(" [ Gameplay Effect System ] ")]
         [SerializeField] private FGameplayEffect[] initGameplayEffects;
-        [SerializeField][Min(0f)] private float timeScale = 1f;
-
         private List<IGameplayEffectSpec> gameplayEffects;
-
-        public float TimeScale => timeScale;
         public IReadOnlyList<IGameplayEffectSpec> GameplayEffects => gameplayEffects;
 
         public event ChangeGameplayEffectHandler OnGrantedEffect;
@@ -156,9 +150,9 @@ namespace StudioScor.GameplayEffectSystem
         }
         protected virtual void OnReset() { }
 
-        private void Update()
+        public override void Tick(float deltaTime)
         {
-            float deltaTime = Time.deltaTime;
+            base.Tick(deltaTime);
 
             for (int i = GameplayEffects.LastIndex(); i >= 0; i--)
             {
@@ -167,11 +161,6 @@ namespace StudioScor.GameplayEffectSystem
                 if (!GameplayEffects[i].IsActivate)
                     RemoveEffectSpec(GameplayEffects[i]);
             }
-        }
-
-        public void SetSpeed(float newSpeed)
-        {
-            timeScale = newSpeed;
         }
 
         public bool TryTakeEffect(GameplayEffect effect, int level = 0, object data = default)
