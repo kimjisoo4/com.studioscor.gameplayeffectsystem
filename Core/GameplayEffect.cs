@@ -7,15 +7,15 @@ namespace StudioScor.GameplayEffectSystem
     public abstract partial class GameplayEffect : BaseScriptableObject
     {
         [Header(" [ Gameplay Effect ]")]
-        [SerializeField] protected EGameplayEffectType effectType;
-        [SerializeField][SEnumCondition(nameof(effectType), (int)EGameplayEffectType.Duration)] protected float duration = 5f;
-        [SerializeField] protected bool unscaledTime = false;
+        [SerializeField] protected EGameplayEffectType _EffectType;
+        [SerializeField][SEnumCondition(nameof(_EffectType), (int)EGameplayEffectType.Duration)] protected float _Duration = 5f;
+        [SerializeField] protected bool _UnscaledTime = false;
 
-        public EGameplayEffectType Type => effectType;
-        public float Duration => duration;
+        public EGameplayEffectType Type => _EffectType;
+        public float Duration => _Duration;
 
 
-        public bool UnscaledTime => unscaledTime;
+        public bool UnscaledTime => _UnscaledTime;
 
         public abstract IGameplayEffectSpec CreateSpec(IGameplayEffectSystem gameplayEffectSystem, int level = 0, object data = default);
     }
