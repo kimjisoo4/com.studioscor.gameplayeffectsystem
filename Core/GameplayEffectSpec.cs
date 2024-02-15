@@ -9,25 +9,28 @@ namespace StudioScor.GameplayEffectSystem
 
     public abstract class GameplayEffectSpec : BaseClass, IGameplayEffectSpec
     {
-        protected GameplayEffect _gameplayEffect;
-        protected IGameplayEffectSystem _gameplayEffectSystem;
+        protected GameplayEffect _GameplayEffect;
+        protected IGameplayEffectSystem _GameplayEffectSystem;
+        protected GameObject _Instigator;
 
-        private bool _isActivate = false;
+        private bool _IsActivate = false;
 
-        protected int _level;
-        protected object _data;
-        protected float _remainTime;
+        protected int _Level;
+        protected object _Data;
+        protected float _RemainTime;
 
-        public GameplayEffect GameplayEffect => _gameplayEffect;
-        public IGameplayEffectSystem GameplayEffectSystem => _gameplayEffectSystem;
-        public bool IsActivate => _isActivate;
-        public int Level => _level;
-        public float RemainTime => _remainTime;
-        public object Data => _data;
+        public GameObject gameObject => _GameplayEffectSystem is null ? null : _GameplayEffectSystem.gameObject;
+        public GameplayEffect GameplayEffect => _GameplayEffect;
+        public IGameplayEffectSystem GameplayEffectSystem => _GameplayEffectSystem;
+        public GameObject Instigator => _Instigator;
+        public bool IsActivate => _IsActivate;
+        public int Level => _Level;
+        public float RemainTime => _RemainTime;
+        public object Data => _Data;
 
 #if UNITY_EDITOR
         public override bool UseDebug => GameplayEffect.UseDebug;
-        public override Object Context => _gameplayEffect;
+        public override Object Context => _GameplayEffect;
 #endif
 
         public event EffectSpecStateHandler OnActivateEffect;
@@ -40,17 +43,18 @@ namespace StudioScor.GameplayEffectSystem
         public event EffectSpecLevelStateHandler OnChangedEffectLevel;
 
         public GameplayEffectSpec() { }
-        public GameplayEffectSpec(GameplayEffect gameplayEffect, IGameplayEffectSystem gameplayEffectSystem, int level = 0, object data = default)
+        public GameplayEffectSpec(GameplayEffect gameplayEffect, IGameplayEffectSystem gameplayEffectSystem, GameObject instigator = null, int level = 0, object data = default)
         {
-            SetupSpec(gameplayEffect, gameplayEffectSystem, level, data);
+            SetupSpec(gameplayEffect, gameplayEffectSystem, instigator, level, data);
         }
 
-        public virtual void SetupSpec(GameplayEffect gameplayEffect, IGameplayEffectSystem gameplayEffectSystem, int level = 0, object data = default)
+        public virtual void SetupSpec(GameplayEffect gameplayEffect, IGameplayEffectSystem gameplayEffectSystem, GameObject instigator, int level = 0, object data = default)
         {
-            this._gameplayEffect = gameplayEffect;
-            this._gameplayEffectSystem = gameplayEffectSystem;
-            this._level = level;
-            this._data = data;
+            _GameplayEffect = gameplayEffect;
+            _GameplayEffectSystem = gameplayEffectSystem;
+            _Level = level;
+            _Data = data;
+            _Instigator = instigator;
         }
 
         public virtual void Copy(IGameplayEffectSpec effectSpec)
@@ -89,12 +93,12 @@ namespace StudioScor.GameplayEffectSystem
 
         public void ChangeLevel(int level) 
         {
-            if (this._level == level)
+            if (this._Level == level)
                 return;
 
             var prevLevel = level;
 
-            this._level = level;
+            this._Level = level;
 
             OnChangeLevel(prevLevel);
 
@@ -111,18 +115,18 @@ namespace StudioScor.GameplayEffectSystem
         {
             Log(" Activate Effect ");
 
-            _isActivate = true;
+            _IsActivate = true;
 
             OnEnterEffect();
 
-            if (_gameplayEffect.Type.Equals(EGameplayEffectType.Instante))
+            if (_GameplayEffect.Type.Equals(EGameplayEffectType.Instante))
             {
                 EndEffect();
 
                 return;
             }
 
-            _remainTime = GameplayEffect.Duration;
+            _RemainTime = GameplayEffect.Duration;
         }
 
         public bool TryTakeEffect()
@@ -145,11 +149,11 @@ namespace StudioScor.GameplayEffectSystem
 
             if (GameplayEffect.Type.Equals(EGameplayEffectType.Duration))
             {
-                _remainTime -= _gameplayEffect.UnscaledTime ? Time.deltaTime : deltaTime;
+                _RemainTime -= _GameplayEffect.UnscaledTime ? Time.deltaTime : deltaTime;
 
                 OnUpdateEffect(deltaTime);
 
-                if (_remainTime <= 0f)
+                if (_RemainTime <= 0f)
                 {
                     EndEffect();
                 }
@@ -161,12 +165,12 @@ namespace StudioScor.GameplayEffectSystem
         }
         public void EndEffect()
         {
-            if (!_isActivate)
+            if (!_IsActivate)
                 return;
 
             Log(" End Effect ");
             
-            _isActivate = false;
+            _IsActivate = false;
 
             OnFInishEffect();
 
@@ -174,12 +178,12 @@ namespace StudioScor.GameplayEffectSystem
         }
         public void ForceCancelEffect()
         {
-            if (!_isActivate)
+            if (!_IsActivate)
                 return;
 
             Log(" Force Cancel Effect ");
 
-            _isActivate = false;
+            _IsActivate = false;
 
             OnCancelEffect();
 
@@ -230,7 +234,7 @@ namespace StudioScor.GameplayEffectSystem
         {
             Log("On Changed Effect Level - Current Level : " + Level + " Prev Level : " + prevLevel);
 
-            OnChangedEffectLevel?.Invoke(this, _level, prevLevel);
+            OnChangedEffectLevel?.Invoke(this, _Level, prevLevel);
         }
 
        

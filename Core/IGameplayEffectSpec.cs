@@ -1,4 +1,6 @@
-﻿namespace StudioScor.GameplayEffectSystem
+﻿using UnityEngine;
+
+namespace StudioScor.GameplayEffectSystem
 {
     public interface IGameplayEffectSpecEvent
     {
@@ -15,12 +17,13 @@
         public GameplayEffect GameplayEffect { get; }
         public IGameplayEffectSystem GameplayEffectSystem { get; }
 
+        public GameObject gameObject { get; }
         public bool IsActivate { get; }
         public int Level { get; }
         public float RemainTime { get; }
         public object Data { get; }
 
-        public void SetupSpec(GameplayEffect gameplayEffect, IGameplayEffectSystem gameplayEffectSystem, int level = 0, object data = default);
+        public void SetupSpec(GameplayEffect gameplayEffect, IGameplayEffectSystem gameplayEffectSystem, GameObject instigator = null, int level = 0, object data = default);
 
         public void Copy(IGameplayEffectSpec effectSpec);
         public bool CanTakeEffect();

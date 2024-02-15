@@ -17,7 +17,7 @@ namespace StudioScor.GameplayEffectSystem
 
         public bool UnscaledTime => _UnscaledTime;
 
-        public abstract IGameplayEffectSpec CreateSpec(IGameplayEffectSystem gameplayEffectSystem, int level = 0, object data = default);
+        public abstract IGameplayEffectSpec CreateSpec(IGameplayEffectSystem gameplayEffectSystem, GameObject instigator = null, int level = 0, object data = default);
     }
 }
 
