@@ -1,7 +1,7 @@
 ﻿using StudioScor.Utilities;
 using UnityEngine;
 
-namespace StudioScor.GameplayEffectSystem.Extend.Task
+namespace StudioScor.GameplayEffectSystem.Extend.TaskSystem
 {
     public class TakeGameplayEffectsTaskAction : TaskAction
     {
