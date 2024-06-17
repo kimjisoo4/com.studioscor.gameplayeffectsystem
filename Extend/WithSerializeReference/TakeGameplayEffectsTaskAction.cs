@@ -6,10 +6,14 @@ namespace StudioScor.GameplayEffectSystem.Extend.TaskSystem
     public class TakeGameplayEffectsTaskAction : TaskAction
     {
         [Header(" [ Take Gameplay Effect Action ] ")]
-        [SerializeField] private GameplayEffect[] _gameplayEffects;
-        [SerializeReference]
 #if SCOR_ENABLE_SERIALIZEREFERENCE
-        [SerializeReferenceDropdown]
+        [SerializeReference, SerializeReferenceDropdown]
+#endif
+        private IGameObjectVariable _instigator = new SelfGameObjectVariable();
+
+        [SerializeField] private GameplayEffect[] _gameplayEffects;
+#if SCOR_ENABLE_SERIALIZEREFERENCE
+        [SerializeReference, SerializeReferenceDropdown]
 #endif
          private IIntegerVariable _level = new DefaultIntegerVariable();
 
@@ -19,6 +23,7 @@ namespace StudioScor.GameplayEffectSystem.Extend.TaskSystem
         {
             base.Setup(owner);
 
+            _instigator.Setup(Owner);
             _level.Setup(Owner);
         }
         public override ITaskAction Clone()
@@ -26,6 +31,7 @@ namespace StudioScor.GameplayEffectSystem.Extend.TaskSystem
             var clone = new TakeGameplayEffectsTaskAction();
 
             clone._original = this;
+            clone._instigator = _instigator.Clone();
             clone._level = _level.Clone();
 
             return clone;
@@ -36,10 +42,11 @@ namespace StudioScor.GameplayEffectSystem.Extend.TaskSystem
             if(target.TryGetGameplayEffectSystem(out IGameplayEffectSystem gameplayEffectSystem))
             {
                 var effects = _original is null ? _gameplayEffects : _original._gameplayEffects;
+                var owner = _instigator.GetValue();
 
                 foreach (var effect in effects)
                 {
-                    gameplayEffectSystem.TryTakeEffect(effect, Owner, _level.GetValue());
+                    gameplayEffectSystem.TryTakeEffect(effect, owner, _level.GetValue());
                 }
                 
             }
