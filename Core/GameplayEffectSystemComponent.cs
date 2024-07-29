@@ -4,7 +4,6 @@ using StudioScor.Utilities;
 
 namespace StudioScor.GameplayEffectSystem
 {
-    public delegate void ChangeGameplayEffectHandler(GameplayEffectSystemComponent effectSystem, IGameplayEffectSpec effectSpec);
 
     public static class GameplayEffectSystemUtility
     {
@@ -67,13 +66,14 @@ namespace StudioScor.GameplayEffectSystem
 
     public interface IGameplayEffectSystem
     {
+        public delegate void ChangeGameplayEffectHandler(IGameplayEffectSystem effectSystem, IGameplayEffectSpec effectSpec);
         public Transform transform { get; }
         public GameObject gameObject { get; }
 
         public IReadOnlyList<IGameplayEffectSpec> GameplayEffects { get; }
 
         public void Tick(float deltaTime);
-        public bool TryTakeEffect(GameplayEffect effect, GameObject instigator = null, int level = 0, object data = default);
+        public (bool isActivate, IGameplayEffectSpec effectSpec) TryTakeEffect(GameplayEffect effect, GameObject instigator = null, int level = 0, object data = default);
         public void CancelEffect(GameplayEffect effect);
         public void CancelEffectFromSource(object source);
         public void CancelAllEffect();
@@ -98,8 +98,8 @@ namespace StudioScor.GameplayEffectSystem
         private List<IGameplayEffectSpec> gameplayEffects;
         public IReadOnlyList<IGameplayEffectSpec> GameplayEffects => gameplayEffects;
 
-        public event ChangeGameplayEffectHandler OnGrantedEffect;
-        public event ChangeGameplayEffectHandler OnRemovedEffect;
+        public event IGameplayEffectSystem.ChangeGameplayEffectHandler OnGrantedEffect;
+        public event IGameplayEffectSystem.ChangeGameplayEffectHandler OnRemovedEffect;
 
         private void OnValidate()
         {
@@ -156,17 +156,19 @@ namespace StudioScor.GameplayEffectSystem
 
             for (int i = GameplayEffects.LastIndex(); i >= 0; i--)
             {
-                GameplayEffects[i].UpdateEffect(deltaTime);
+                var gameplayEffect = GameplayEffects[i];
 
-                if (!GameplayEffects[i].IsActivate)
-                    RemoveEffectSpec(GameplayEffects[i]);
+                gameplayEffect.UpdateEffect(deltaTime);
+
+                if (!gameplayEffect.IsActivate)
+                    RemoveEffectSpec(gameplayEffect);
             }
         }
 
-        public bool TryTakeEffect(GameplayEffect effect, GameObject instigator = null, int level = 0, object data = default)
+        public (bool isActivate, IGameplayEffectSpec effectSpec) TryTakeEffect(GameplayEffect effect, GameObject instigator = null, int level = 0, object data = default)
         {
             if (!effect)
-                return false;
+                return (false, null);
 
             var spec = effect.CreateSpec(this, instigator, level, data);
 
@@ -177,10 +179,10 @@ namespace StudioScor.GameplayEffectSystem
                 if (spec.IsActivate)
                     gameplayEffects.Add(spec);
 
-                return true;
+                return (true, spec);
             }
 
-            return false;
+            return (false, null);
         }
         
 

@@ -33,12 +33,12 @@ namespace StudioScor.GameplayEffectSystem.VisualScripting
             }
         }
 
-        private void EffectSystem_OnRemovedEffect(GameplayEffectSystemComponent effectSystem, IGameplayEffectSpec effectSpec)
+        private void EffectSystem_OnRemovedEffect(IGameplayEffectSystem effectSystem, IGameplayEffectSpec effectSpec)
         {
             EventBus.Trigger(new EventHook(EffectSystemWithVisualScripting.EFFECTSYSTEM_ON_REMOVED_EFFECT, effectSystem), effectSpec);
         }
 
-        private void EffectSystem_OnGrantedEffect(GameplayEffectSystemComponent effectSystem, IGameplayEffectSpec effectSpec)
+        private void EffectSystem_OnGrantedEffect(IGameplayEffectSystem effectSystem, IGameplayEffectSpec effectSpec)
         {
             EventBus.Trigger(new EventHook(EffectSystemWithVisualScripting.EFFECTSYSTEM_ON_GRANTED_EFFECT, effectSystem), effectSpec);
         }

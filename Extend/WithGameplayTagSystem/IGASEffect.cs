@@ -27,16 +27,16 @@ namespace StudioScor.GameplayEffectSystem
     public abstract class GASGameplayEffect : GameplayEffect, IGASGameplayEffect
     {
         [Header(" [ Character Effect ] ")]
-        [SerializeField] protected GameplayTag _EffectTag;
-        [SerializeField] private GameplayTag[] _AttributeTags;
-        [SerializeField] private FConditionTags _ConditionTags;
-        [SerializeField] private FGameplayTags _GrantTags;
-        [SerializeField] private GameplayTag[] _CancelEffectTags;
-        public GameplayTag EffectTag => _EffectTag;
-        public IReadOnlyCollection<GameplayTag> AttributeTags => _AttributeTags;
-        public FConditionTags ConditionTags => _ConditionTags;
-        public FGameplayTags GrantTags => _GrantTags;
-        public IReadOnlyCollection<GameplayTag> CancelEffectTags => _CancelEffectTags;
+        [SerializeField] protected GameplayTag _effectTag;
+        [SerializeField] private GameplayTag[] _attributeTags;
+        [SerializeField] private FConditionTags _conditionTags;
+        [SerializeField] private FGameplayTags _grantTags;
+        [SerializeField] private GameplayTag[] _cancelEffectTags;
+        public GameplayTag EffectTag => _effectTag;
+        public IReadOnlyCollection<GameplayTag> AttributeTags => _attributeTags;
+        public FConditionTags ConditionTags => _conditionTags;
+        public FGameplayTags GrantTags => _grantTags;
+        public IReadOnlyCollection<GameplayTag> CancelEffectTags => _cancelEffectTags;
     }
 
     public abstract class GASGameplayEffectSpec : GameplayEffectSpec
