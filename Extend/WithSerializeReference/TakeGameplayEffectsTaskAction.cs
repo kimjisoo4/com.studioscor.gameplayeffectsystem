@@ -46,7 +46,7 @@ namespace StudioScor.GameplayEffectSystem.Extend.TaskSystem
 
                 foreach (var effect in effects)
                 {
-                    gameplayEffectSystem.TryTakeEffect(effect, owner, _level.GetValue());
+                    gameplayEffectSystem.TryApplyGameplayEffect(effect, owner, _level.GetValue());
                 }
                 
             }

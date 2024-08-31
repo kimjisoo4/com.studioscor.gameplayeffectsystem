@@ -73,7 +73,7 @@ namespace StudioScor.GameplayEffectSystem
         public IReadOnlyList<IGameplayEffectSpec> GameplayEffects { get; }
 
         public void Tick(float deltaTime);
-        public (bool isActivate, IGameplayEffectSpec effectSpec) TryTakeEffect(GameplayEffect effect, GameObject instigator = null, int level = 0, object data = default);
+        public (bool isActivate, IGameplayEffectSpec effectSpec) TryApplyGameplayEffect(GameplayEffect effect, GameObject instigator = null, int level = 0, object data = default);
         public void CancelEffect(GameplayEffect effect);
         public void CancelEffectFromSource(object source);
         public void CancelAllEffect();
@@ -126,7 +126,7 @@ namespace StudioScor.GameplayEffectSystem
         {
             foreach(var initGameplayEffect in initGameplayEffects)
             {
-                TryTakeEffect(initGameplayEffect.GameplayEffect, gameObject, initGameplayEffect.Level, null);
+                TryApplyGameplayEffect(initGameplayEffect.GameplayEffect, gameObject, initGameplayEffect.Level, null);
             }
         }
 
@@ -165,7 +165,7 @@ namespace StudioScor.GameplayEffectSystem
             }
         }
 
-        public (bool isActivate, IGameplayEffectSpec effectSpec) TryTakeEffect(GameplayEffect effect, GameObject instigator = null, int level = 0, object data = default)
+        public (bool isActivate, IGameplayEffectSpec effectSpec) TryApplyGameplayEffect(GameplayEffect effect, GameObject instigator = null, int level = 0, object data = default)
         {
             if (!effect)
                 return (false, null);
