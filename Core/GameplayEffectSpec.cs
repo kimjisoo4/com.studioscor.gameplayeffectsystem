@@ -53,6 +53,10 @@ namespace StudioScor.GameplayEffectSystem
             _data = data;
             _instigator = instigator;
         }
+        public virtual void ReleaseSpec()
+        {
+
+        }
 
         public virtual void Copy(IGameplayEffectSpec effectSpec)
         {
@@ -180,6 +184,8 @@ namespace StudioScor.GameplayEffectSystem
             OnExitEffect();
 
             Invoke_OnEndedEffect();
+
+            ReleaseSpec();
         }
         public void ForceCancelEffect()
         {

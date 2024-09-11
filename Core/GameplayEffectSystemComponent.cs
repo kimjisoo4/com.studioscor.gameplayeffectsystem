@@ -181,6 +181,10 @@ namespace StudioScor.GameplayEffectSystem
 
                 return (true, spec);
             }
+            else
+            {
+                spec.ReleaseSpec();
+            }
 
             return (false, null);
         }

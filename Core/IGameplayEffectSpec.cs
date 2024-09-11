@@ -19,6 +19,8 @@ namespace StudioScor.GameplayEffectSystem
 
         public void SetupSpec(GameplayEffect gameplayEffect, IGameplayEffectSystem gameplayEffectSystem, GameObject instigator = null, int level = 0, object data = default);
 
+        public void ReleaseSpec();
+
         public void Copy(IGameplayEffectSpec effectSpec);
         public bool CanTakeEffect();
         public bool TryTakeEffect();
