@@ -73,7 +73,8 @@ namespace StudioScor.GameplayEffectSystem
         public IReadOnlyList<IGameplayEffectSpec> GameplayEffects { get; }
 
         public void Tick(float deltaTime);
-        public (bool isActivate, IGameplayEffectSpec effectSpec) TryApplyGameplayEffect(GameplayEffect effect, GameObject instigator = null, int level = 0, object data = default);
+        public bool TryApplyGameplayEffect(GameplayEffect effect, GameObject instigator = null, int level = 0, object data = default);
+        public bool TryApplyGameplayEffect(GameplayEffect effect, GameObject instigator, int level, object data, out IGameplayEffectSpec spec);
         public void CancelEffect(GameplayEffect effect);
         public void CancelEffectFromSource(object source);
         public void CancelAllEffect();
@@ -165,10 +166,10 @@ namespace StudioScor.GameplayEffectSystem
             }
         }
 
-        public (bool isActivate, IGameplayEffectSpec effectSpec) TryApplyGameplayEffect(GameplayEffect effect, GameObject instigator = null, int level = 0, object data = default)
+        public bool TryApplyGameplayEffect(GameplayEffect effect, GameObject instigator = null, int level = 0, object data = default)
         {
             if (!effect)
-                return (false, null);
+                return false;
 
             var spec = effect.CreateSpec(this, instigator, level, data);
 
@@ -179,16 +180,42 @@ namespace StudioScor.GameplayEffectSystem
                 if (spec.IsActivate)
                     gameplayEffects.Add(spec);
 
-                return (true, spec);
+                return true;
             }
             else
             {
                 spec.ReleaseSpec();
             }
 
-            return (false, null);
+            return false;
         }
-        
+        public bool TryApplyGameplayEffect(GameplayEffect effect, GameObject instigator, int level, object data, out IGameplayEffectSpec spec)
+        {
+            spec = null;
+
+            if (!effect)
+                return false;
+
+            spec = effect.CreateSpec(this, instigator, level, data);
+
+            if (spec.TryTakeEffect())
+            {
+                Callback_OnGrantedEffect(spec);
+
+                if (spec.IsActivate)
+                    gameplayEffects.Add(spec);
+
+                return true;
+            }
+            else
+            {
+                spec.ReleaseSpec();
+                spec = null;
+            }
+
+            return false;
+        }
+
 
 
         #region Remove Effect
