@@ -9,34 +9,34 @@ namespace StudioScor.GameplayEffectSystem
 {
     public interface IGASEffect
     {
-        public GameplayTagSO EffectTag { get; }
-        public IReadOnlyCollection<GameplayTagSO> AttributeTags { get; }
+        public GameplayTag EffectTag { get; }
+        public IReadOnlyCollection<GameplayTag> AttributeTags { get; }
         public FConditionTags ConditionTags { get; }
         public FGameplayTags GrantTags { get; }
-        public IReadOnlyCollection<GameplayTagSO> CancelEffectTags { get; }
+        public IReadOnlyCollection<GameplayTag> CancelEffectTags { get; }
     }
     public interface IGASGameplayEffect
     {
-        public GameplayTagSO EffectTag { get; }
-        public IReadOnlyCollection<GameplayTagSO> AttributeTags { get; }
+        public GameplayTag EffectTag { get; }
+        public IReadOnlyCollection<GameplayTag> AttributeTags { get; }
         public FConditionTags ConditionTags { get; }
         public FGameplayTags GrantTags { get; }
-        public IReadOnlyCollection<GameplayTagSO> CancelEffectTags { get; }
+        public IReadOnlyCollection<GameplayTag> CancelEffectTags { get; }
     }
 
     public abstract class GASGameplayEffect : GameplayEffect, IGASGameplayEffect
     {
         [Header(" [ Character Effect ] ")]
-        [SerializeField] protected GameplayTagSO _effectTag;
-        [SerializeField] private GameplayTagSO[] _attributeTags;
+        [SerializeField] protected GameplayTag _effectTag;
+        [SerializeField] private GameplayTag[] _attributeTags;
         [SerializeField] private FConditionTags _conditionTags;
         [SerializeField] private FGameplayTags _grantTags;
-        [SerializeField] private GameplayTagSO[] _cancelEffectTags;
-        public GameplayTagSO EffectTag => _effectTag;
-        public IReadOnlyCollection<GameplayTagSO> AttributeTags => _attributeTags;
+        [SerializeField] private GameplayTag[] _cancelEffectTags;
+        public GameplayTag EffectTag => _effectTag;
+        public IReadOnlyCollection<GameplayTag> AttributeTags => _attributeTags;
         public FConditionTags ConditionTags => _conditionTags;
         public FGameplayTags GrantTags => _grantTags;
-        public IReadOnlyCollection<GameplayTagSO> CancelEffectTags => _cancelEffectTags;
+        public IReadOnlyCollection<GameplayTag> CancelEffectTags => _cancelEffectTags;
     }
 
     public abstract class GASGameplayEffectSpec : GameplayEffectSpec
@@ -84,7 +84,7 @@ namespace StudioScor.GameplayEffectSystem
         {
             Log(" Can Remove Effect From Source ? ");
 
-            IReadOnlyCollection<GameplayTagSO> gameplayTags = source as IReadOnlyCollection<GameplayTagSO>;
+            IReadOnlyCollection<GameplayTag> gameplayTags = source as IReadOnlyCollection<GameplayTag>;
 
             if (gameplayTags is null)
                 return false;
